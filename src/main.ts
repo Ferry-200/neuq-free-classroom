@@ -1,34 +1,66 @@
-/**
- * Some predefined delay values (in milliseconds).
- */
-export enum Delays {
-  Short = 500,
-  Medium = 2000,
-  Long = 5000,
+import { writeFile } from "fs/promises";
+import { NEUQJWXTClient } from "./neuq-jwxt-client.js";
+import path from "path";
+import { BuildingId, CampusId, CycleTimeCycleType, RoomApplyTimeType } from "./type.js";
+import { existsSync, readFileSync } from "fs";
+
+function today() {
+    const date = new Date()
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
 }
 
-/**
- * Returns a Promise<string> that resolves after a given time.
- *
- * @param {string} name - A name.
- * @param {number=} [delay=Delays.Medium] - A number of milliseconds to delay resolution of the Promise.
- * @returns {Promise<string>}
- */
-function delayedHello(
-  name: string,
-  delay: number = Delays.Medium,
-): Promise<string> {
-  return new Promise((resolve: (value?: string) => void) =>
-    setTimeout(() => resolve(`Hello, ${name}`), delay),
-  );
+function getEnvJSON(): { username: string, password: string } | undefined {
+    const envPath = ".env.json"
+    if (existsSync(envPath)) {
+        return JSON.parse(readFileSync(envPath, "utf-8"))
+    }
+
+    return undefined
 }
 
-// Please see the comment in the .eslintrc.json file about the suppressed rule!
-// Below is an example of how to use ESLint errors suppression. You can read more
-// at https://eslint.org/docs/latest/user-guide/configuring/rules#disabling-rules
+async function main() {
+    const client = new NEUQJWXTClient()
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/no-explicit-any
-export async function greeter(name: any) {
-  // The name parameter should be of type string. Any is used only to trigger the rule.
-  return await delayedHello(name, Delays.Long);
+    const envJSON = getEnvJSON()
+    if (!envJSON) {
+        console.error(".env.json DOESN'T in root dir")
+    }
+
+    const succeed = await client.login(envJSON.username, envJSON.password)
+    if (!succeed) {
+        console.error("failed to login")
+        return
+    }
+    console.info("login succeed")
+
+    const date = today()
+
+    for (let i = 1; i <= 1; i++) {
+        console.info(`get ${today} gxg ${i}-${i} free classroom`)
+        const freeClassroom = await client.getFreeClassroom({
+            "classroom.campus.id": CampusId.本部,
+            "classroom.building.id": BuildingId.工学馆,
+            "classroom.name": "",
+            "cycleTime.cycleCount": 1,
+            "cycleTime.cycleType": CycleTimeCycleType.天,
+            "cycleTime.dateBegin": date,
+            "cycleTime.dateEnd": date,
+            roomApplyTimeType: RoomApplyTimeType.小节,
+            timeBegin: i,
+            timeEnd: i,
+            pageSize: 500
+        })
+
+        await writeFile(
+            path.join("free-classroom-data", `gxg-${date}-${i}-${i}.json`),
+            JSON.stringify(freeClassroom),
+            "utf-8"
+        )
+    }
+}
+
+try {
+    main()
+} catch (err) {
+    console.error(err)
 }
