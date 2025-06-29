@@ -2,7 +2,7 @@ import { writeFile } from "fs/promises";
 import { NEUQJWXTClient } from "./neuq-jwxt-client.js";
 import path from "path";
 import { BuildingId, CampusId, CycleTimeCycleType, RoomApplyTimeType } from "./type.js";
-import { existsSync, readFileSync } from "fs";
+import { existsSync, mkdirSync, readFileSync } from "fs";
 
 function today() {
     const date = new Date()
@@ -35,8 +35,12 @@ async function main() {
 
     const date = today()
 
+    if (!existsSync("free-classroom-data")) {
+        mkdirSync("free-classroom-data")
+    }
+
     for (let i = 1; i <= 1; i++) {
-        console.info(`get ${today} gxg ${i}-${i} free classroom`)
+        console.info(`get ${date} gxg ${i}-${i} free classroom`)
         const freeClassroom = await client.getFreeClassroom({
             "classroom.campus.id": CampusId.本部,
             "classroom.building.id": BuildingId.工学馆,
