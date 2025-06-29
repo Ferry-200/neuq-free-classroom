@@ -21,10 +21,6 @@ export default tseslint.config(
       '@typescript-eslint': tseslint.plugin,
     },
 
-    rules: {
-      '@typescript-eslint/explicit-function-return-type': 'warn',
-    },
-
     languageOptions: {
       parser: tseslint.parser,
       ecmaVersion: 2020,
