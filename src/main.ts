@@ -39,7 +39,7 @@ async function main() {
         mkdirSync("free-classroom-data")
     }
 
-    for (let i = 1; i <= 1; i++) {
+    for (let i = 1; i <= 12; i++) {
         console.info(`get ${date} gxg ${i}-${i} free classroom`)
         const freeClassroom = await client.getFreeClassroom({
             "classroom.campus.id": CampusId.本部,
