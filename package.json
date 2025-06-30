@@ -23,7 +23,7 @@
   },
   "scripts": {
     "main": "npx tsx src/main.ts",
-    "start:build": "node build/src/main.js",
+    "start:built": "node build/src/main.js",
     "clean": "rimraf coverage build tmp",
     "prebuild": "npm run lint",
     "build": "tsc -p tsconfig.json",
@@ -31,8 +31,7 @@
     "build:release": "npm run clean && tsc -p tsconfig.release.json",
     "lint": "eslint .",
     "prettier": "prettier \"{src,__{tests}__}/**/*.{ts,mts}\" --config .prettierrc --write",
-    "prettier:check": "prettier \"{src,__{tests}__}/**/*.{ts,mts}\" --config .prettierrc --check",
-    "test:watch": "vitest unit"
+    "prettier:check": "prettier \"{src,__{tests}__}/**/*.{ts,mts}\" --config .prettierrc --check"
   },
   "author": "Ferry",
   "license": "UNLICENSED",
