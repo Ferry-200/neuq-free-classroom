@@ -43,8 +43,8 @@ jobs:
       - name: Write update timestamp
         run: |
           TIME_CN=$(TZ=Asia/Shanghai date --iso-8601=seconds)
-          echo "{\"message\": \"update time: $TIME_CN\"}" > site/src/build-info.json
-          echo "COMMIT_MSG=update time: $TIME_CN" >> $GITHUB_ENV
+          echo "{\"message\": \"更新时间：$TIME_CN\"}" > site/src/build-info.json
+          echo "COMMIT_MSG=更新时间：$TIME_CN" >> $GITHUB_ENV
 
       - name: Commit and push to site repo
         run: |
