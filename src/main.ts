@@ -9,6 +9,25 @@ function today() {
     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
 }
 
+function parseArgs(): { username: string, password: string } | undefined {
+    const args = process.argv.slice(2);
+    let username = "", password = "";
+
+    for (let i = 0; i < args.length; i++) {
+        if (args[i] === "-u" && args[i + 1]) {
+            username = args[i + 1];
+        } else if (args[i] === "-p" && args[i + 1]) {
+            password = args[i + 1];
+        }
+    }
+
+    if (username && password) {
+        return { username, password };
+    }
+
+    return undefined;
+}
+
 function getEnvJSON(): { username: string, password: string } | undefined {
     const envPath = ".env.json"
     if (existsSync(envPath)) {
@@ -21,12 +40,13 @@ function getEnvJSON(): { username: string, password: string } | undefined {
 async function main() {
     const client = new NEUQJWXTClient()
 
-    const envJSON = getEnvJSON()
-    if (!envJSON) {
-        console.error(".env.json DOESN'T in root dir")
+    const user = parseArgs() ?? getEnvJSON()
+    if (!user) {
+        console.error("pass -u username -p password or provide them in `.env.json`")
+        return
     }
 
-    const succeed = await client.login(envJSON.username, envJSON.password)
+    const succeed = await client.login(user.username, user.password)
     if (!succeed) {
         console.error("failed to login")
         return
