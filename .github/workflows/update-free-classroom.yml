@@ -1,0 +1,56 @@
+name: Update Free Classroom Data
+
+on:
+  schedule:
+    - cron: '0 22 * * *'  # 北京时间 06:00
+    - cron: '0 4  * * *'  # 北京时间 12:00
+    - cron: '0 10 * * *'  # 北京时间 18:00
+    - cron: '0 16 * * *'  # 北京时间 00:00（次日）
+  workflow_dispatch:      # 手动触发支持
+
+jobs:
+  fetch-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Run data fetch script
+        run: node build/src/main.js -u ${{ secrets.USERNAME }} -p ${{ secrets.PASSWORD }}
+
+      - name: Clone site repo
+        run: |
+          git clone https://x-access-token:${{ secrets.SITE_ACCESS_TOKEN }}@github.com/Ferry-200/neuq-free-classroom-site.git site
+
+      - name: Copy generated data to site repo
+        run: |
+          rm -rf site/src/content/free-classroom-data
+          mkdir -p site/src/content/free-classroom-data
+          cp -r free-classroom-data/*.json site/src/content/free-classroom-data/
+
+      - name: Write update timestamp
+        run: |
+          TIME_CN=$(TZ=Asia/Shanghai date --iso-8601=seconds)
+          echo "{\"msg\": \"update time: $TIME_CN\"}" > site/src/build-info.json
+          echo "COMMIT_MSG=update time: $TIME_CN" >> $GITHUB_ENV
+
+      - name: Commit and push to site repo
+        run: |
+          cd site
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "$COMMIT_MSG"
+          git push
