@@ -1,3 +1,49 @@
+# NEUQ Free Classroom
+
+直接通过请求接口（**不是模拟点击**）获取工学馆等教学楼空教室的 Node 命令行工具。
+
+一分钟内即可获取一天内十二节的空教室信息
+（为了避免触发反爬限制，登陆前等待 3s，每次请求空教室接口前等待 3s，
+总共是 3 + 3 * 12 = 39s）。
+
+[**技术方案**](技术方案.md)
+
+## 使用方法
+
+1. clone this repo
+2. `npm i`
+3. `npm run build`
+4. `node build/src/main.js -u username -p password`
+
+该工具会把空教室表保存在 free-classroom-data/gxg-yyyy-mm-dd-lesson1-lesson2.json 中。
+
+现在默认获取工学馆的空教室，修改部分代码后也可以获取到别的教学楼的。
+```ts
+const freeClassroom = await client.getFreeClassroom({
+    "classroom.campus.id": CampusId.本部,
+    "classroom.building.id": BuildingId.工学馆,
+    "classroom.name": "",
+    "cycleTime.cycleCount": 1,
+    "cycleTime.cycleType": CycleTimeCycleType.天,
+    "cycleTime.dateBegin": date,
+    "cycleTime.dateEnd": date,
+    roomApplyTimeType: RoomApplyTimeType.小节,
+    timeBegin: i,
+    timeEnd: i,
+    pageSize: 500
+})
+```
+如上，可以修改 src/main.ts line 64, line 76 里的 
+`"classroom.building.id": BuildingId.工学馆, ` 一行。
+BuildingId 中存有其他教学楼的 id，改成对应的即可。
+```ts
+/** 教学楼 */
+export const BuildingId = {
+  工学馆: 1, 基础楼: 2, 综合实验楼: 3, 地质楼: 4,
+  管理楼: 5, 大学会馆: 6, 旧实验楼: 7, 人文楼: 8, 科技楼: 9,
+} as const;
+```
+
 ## 📄 项目用途声明
 
 本人为东北大学秦皇岛分校在读学生，开发本项目仅出于以下目的：
