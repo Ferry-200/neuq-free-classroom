@@ -7,6 +7,7 @@
     "node": ">= 22.11 < 23"
   },
   "devDependencies": {
+    "@types/luxon": "^3.6.2",
     "@eslint/js": "~9.17",
     "@types/crypto-js": "^4.2.2",
     "@types/eslint__js": "~8.42",
@@ -36,7 +37,6 @@
   "author": "Ferry",
   "license": "UNLICENSED",
   "dependencies": {
-    "@types/luxon": "^3.6.2",
     "axios": "^1.10.0",
     "axios-cookiejar-support": "^6.0.2",
     "cheerio": "^1.1.0",
