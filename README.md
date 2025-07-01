@@ -9,6 +9,7 @@
 总共是 3 + 3 * 12 = 39s）。
 
 [**技术方案**](技术方案.md)
+[**展示网页项目**](https://github.com/Ferry-200/neuq-free-classroom-site)
 
 ## 使用方法
 
