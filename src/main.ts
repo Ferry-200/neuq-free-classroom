@@ -3,10 +3,12 @@ import { NEUQJWXTClient } from "./neuq-jwxt-client.js";
 import path from "path";
 import { BuildingId, CampusId, CycleTimeCycleType, RoomApplyTimeType } from "./type.js";
 import { existsSync, mkdirSync, readFileSync } from "fs";
+import { DateTime } from 'luxon'
 
-function today() {
-    const date = new Date()
-    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+function today(): string {
+    return DateTime.now()
+        .setZone('Asia/Shanghai')
+        .toFormat('yyyy-MM-dd')
 }
 
 function parseArgs(): { username: string, password: string } | undefined {
