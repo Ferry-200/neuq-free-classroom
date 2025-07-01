@@ -1,5 +1,7 @@
 # NEUQ Free Classroom
 
+[![Update Free Classroom Data](https://github.com/Ferry-200/neuq-free-classroom/actions/workflows/update-free-classroom.yml/badge.svg)](https://github.com/Ferry-200/neuq-free-classroom/actions/workflows/update-free-classroom.yml)
+
 直接通过请求接口（**不是模拟点击**）获取工学馆等教学楼空教室的 Node 命令行工具。
 
 一分钟内即可获取一天内十二节的空教室信息
