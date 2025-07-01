@@ -20,7 +20,7 @@
 
 该工具会把空教室表保存在 free-classroom-data/gxg-yyyy-mm-dd-lesson1-lesson2.json 中。
 
-现在默认获取工学馆的空教室，修改部分代码后也可以获取到别的教学楼的。
+现在默认获取工学馆当天十二节课的空教室，修改部分代码后也可以获取到别的教学楼别的时间的。
 ```ts
 const freeClassroom = await client.getFreeClassroom({
     "classroom.campus.id": CampusId.本部,
