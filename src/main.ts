@@ -62,7 +62,7 @@ async function main() {
     }
 
     for (let i = 1; i <= 12; i++) {
-        console.info(`get ${date} gxg ${i}-${i} free classroom`)
+        console.info(`requesting ${date} gxg ${i}-${i} free classroom`)
         const freeClassroom = await client.getFreeClassroom({
             "classroom.campus.id": CampusId.本部,
             "classroom.building.id": BuildingId.工学馆,
@@ -76,12 +76,15 @@ async function main() {
             timeEnd: i,
             pageSize: 500
         })
+        console.info(`got ${date} gxg ${i}-${i} free classroom`)
 
+        const filePath = path.join("free-classroom-data", `gxg-${date}-${i}-${i}.json`)
         await writeFile(
-            path.join("free-classroom-data", `gxg-${date}-${i}-${i}.json`),
+            filePath,
             JSON.stringify(freeClassroom),
             "utf-8"
         )
+        console.info(`path: ${filePath}`)
     }
 }
 
