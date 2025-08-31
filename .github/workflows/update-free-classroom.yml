@@ -28,7 +28,7 @@ jobs:
         run: npm run build
 
       - name: Run data fetch script
-        run: node build/src/main.js -u ${{ secrets.USERNAME }} -p ${{ secrets.PASSWORD }}
+        run: node build/src/main.js -u ${{ secrets.USERNAME }} -p ${{ secrets.PASSWORD }} -f both
 
       - name: Clone site repo
         run: |
@@ -38,7 +38,10 @@ jobs:
         run: |
           rm -rf site/src/content/free-classroom-data
           mkdir -p site/src/content/free-classroom-data
-          cp -r free-classroom-data/*.json site/src/content/free-classroom-data/
+          # 复制 JSON 文件
+          cp -r free-classroom-data/*.json site/src/content/free-classroom-data/ 2>/dev/null || echo "No JSON files to copy"
+          # 复制图片文件
+          cp -r free-classroom-data/*.png site/src/content/free-classroom-data/ 2>/dev/null || echo "No image files to copy"
 
       - name: Write update timestamp
         run: |
