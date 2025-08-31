@@ -15,12 +15,33 @@
 
 ## 使用方法
 
+### 基本用法
+
 1. clone this repo
 2. `npm i`
 3. `npm run build`
 4. `node build/src/main.js -u username -p password`
 
-该工具会把空教室表保存在 free-classroom-data/gxg-yyyy-mm-dd-lesson1-lesson2.json 中。
+### 导出格式选项
+
+现在支持三种导出格式：
+
+```bash
+# 导出为 JSON 文件（默认）
+node build/src/main.js -u username -p password -f json
+
+# 导出为图片文件
+node build/src/main.js -u username -p password -f image
+
+# 同时导出 JSON 和图片文件
+node build/src/main.js -u username -p password -f both
+```
+
+该工具会把空教室数据保存在 `free-classroom-data/` 目录中：
+- JSON 格式：`gxg-yyyy-mm-dd-lesson1-lesson2.json`
+- 图片格式：`gxg-yyyy-mm-dd-lesson1-lesson2.png`
+
+### 修改查询的教学楼
 
 现在默认获取工学馆当天十二节课的空教室，修改部分代码后也可以获取到别的教学楼别的时间的。
 ```ts
