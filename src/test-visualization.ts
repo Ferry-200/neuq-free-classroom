@@ -65,7 +65,7 @@ async function testServerCreation() {
 
 async function runTests() {
     console.log('🚀 开始运行可视化功能测试');
-    console.log('=' * 50);
+    console.log('='.repeat(50));
     
     const imageTest = await testImageGeneration();
     console.log('');

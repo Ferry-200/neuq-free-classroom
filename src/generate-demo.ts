@@ -1,6 +1,5 @@
 import { VisualizationServer } from './visualization-server.js';
 import { writeFile } from 'fs/promises';
-import path from 'path';
 
 /**
  * 演示脚本 - 生成静态HTML文件用于演示可视化功能
