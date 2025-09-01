@@ -10,10 +10,46 @@
 （为了避免触发反爬限制，登陆前等待 3s，每次请求空教室接口前等待 3s，
 总共是 3 + 3 * 12 = 39s）。
 
+**✨ 新功能：可视化预览页面！** 现在支持通过 Web 界面查看教室数据的可视化图表。
+
 [**技术方案**](技术方案.md)  
-[**展示网页项目**](https://github.com/Ferry-200/neuq-free-classroom-site)
+[**展示网页项目**](https://github.com/Ferry-200/neuq-free-classroom-site)  
+[**可视化功能说明**](VISUALIZATION_PREVIEW.md)
+
+## 功能特性
+
+### 📊 可视化预览（新增）
+- **Web 界面**：提供友好的可视化预览页面
+- **Canvas 渲染**：使用 Canvas 生成教室数据可视化图片
+- **Mock 数据演示**：包含完整的模拟数据用于功能演示
+- **响应式设计**：支持桌面和移动设备访问
+
+### 🛠️ 命令行工具
+- **直接 API 访问**：不使用模拟点击，直接调用教务系统接口
+- **自动化爬取**：GitHub Actions 定时执行
+- **多教学楼支持**：支持工学馆、基础楼等多个教学楼
 
 ## 使用方法
+
+### 🎯 可视化预览（推荐）
+
+启动 Web 服务器查看可视化界面：
+
+```bash
+# 1. 安装依赖
+npm install
+
+# 2. 启动可视化服务器
+npm run server
+
+# 3. 访问页面
+# 主页: http://localhost:3000
+# 可视化预览: http://localhost:3000/visualization-preview
+```
+
+### 🛠️ 命令行工具
+
+#### 基本用法
 
 1. clone this repo
 2. `npm i`

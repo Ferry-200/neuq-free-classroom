@@ -31,3 +31,8 @@ build/
 free-classroom-data
 
 .env.json
+
+# Demo and test files
+demo-*.html
+demo-*.png
+test-*.png
