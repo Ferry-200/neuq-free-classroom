@@ -19,7 +19,7 @@ export class NEUQJWXTClient {
         const axiosClient = axios.create({
             jar,
             timeout: 60000, // 60 second timeout
-            timeoutErrorMessage: "Request timeout - NEUQ JWXT server did not respond in time"
+            timeoutErrorMessage: "Request timeout after 60 seconds - NEUQ JWXT server did not respond in time"
         })
         axiosClient.defaults.baseURL = "https://jwxt.neuq.edu.cn/eams"
 

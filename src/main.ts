@@ -13,7 +13,7 @@ const NETWORK_ERROR_CODES = ["ETIMEDOUT", "ENETUNREACH", "ECONNRESET"] as const
 
 function isNetworkError(error: Error): boolean {
     const errorCode = (error as NetworkError).code
-    return NETWORK_ERROR_CODES.includes(errorCode as typeof NETWORK_ERROR_CODES[number])
+    return errorCode !== undefined && NETWORK_ERROR_CODES.includes(errorCode as "ETIMEDOUT" | "ENETUNREACH" | "ECONNRESET")
 }
 
 function handleNetworkError(error: unknown, context: string): void {
@@ -122,7 +122,7 @@ async function main() {
             console.info(`path: ${filePath}`)
         } catch (error) {
             handleNetworkError(error, `while fetching ${date} gxg ${i}-${i}`)
-            console.error("Skipping this classroom period")
+            console.error(`Skipping classroom period ${i} and continuing with next period`)
             // Continue with the next period instead of failing completely
             continue
         }
