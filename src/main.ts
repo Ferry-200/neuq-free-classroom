@@ -9,6 +9,29 @@ interface NetworkError extends Error {
     code?: string
 }
 
+const NETWORK_ERROR_CODES = ["ETIMEDOUT", "ENETUNREACH", "ECONNRESET"] as const
+
+function isNetworkError(error: Error): boolean {
+    const errorCode = (error as NetworkError).code
+    return NETWORK_ERROR_CODES.includes(errorCode as typeof NETWORK_ERROR_CODES[number])
+}
+
+function handleNetworkError(error: unknown, context: string): void {
+    if (error instanceof Error) {
+        if (isNetworkError(error)) {
+            console.error(`Network error ${context}: ${error.message}`)
+            console.error("This may be due to network connectivity issues or server unavailability")
+        } else if (error.message.includes("timeout")) {
+            console.error(`Timeout error ${context}: ${error.message}`)
+        } else {
+            console.error(`Unexpected error ${context}:`)
+            console.error(error)
+        }
+    } else {
+        console.error(`Unknown error ${context}:`, error)
+    }
+}
+
 function today(): string {
     return DateTime.now()
         .setZone('Asia/Shanghai')
@@ -56,22 +79,7 @@ async function main() {
     try {
         succeed = await client.login(user.username, user.password)
     } catch (error) {
-        if (error instanceof Error) {
-            const errorCode = (error as NetworkError).code
-            if (errorCode === "ETIMEDOUT" || errorCode === "ENETUNREACH" || errorCode === "ECONNRESET") {
-                console.error("Network error: Unable to connect to NEUQ JWXT server")
-                console.error(`Error details: ${error.message}`)
-                console.error("This may be due to network connectivity issues or server unavailability")
-            } else if (error.message.includes("timeout")) {
-                console.error("Timeout error: NEUQ JWXT server did not respond in time")
-                console.error(`Error details: ${error.message}`)
-            } else {
-                console.error("Unexpected error during login:")
-                console.error(error)
-            }
-        } else {
-            console.error("Unknown error during login:", error)
-        }
+        handleNetworkError(error, "during login")
         return
     }
 
@@ -113,21 +121,8 @@ async function main() {
             )
             console.info(`path: ${filePath}`)
         } catch (error) {
-            if (error instanceof Error) {
-                const errorCode = (error as NetworkError).code
-                if (errorCode === "ETIMEDOUT" || errorCode === "ENETUNREACH" || errorCode === "ECONNRESET") {
-                    console.error(`Network error while fetching ${date} gxg ${i}-${i}: ${error.message}`)
-                    console.error("Skipping this classroom period due to network issues")
-                } else if (error.message.includes("timeout")) {
-                    console.error(`Timeout error while fetching ${date} gxg ${i}-${i}: ${error.message}`)
-                    console.error("Skipping this classroom period due to timeout")
-                } else {
-                    console.error(`Unexpected error while fetching ${date} gxg ${i}-${i}:`)
-                    console.error(error)
-                }
-            } else {
-                console.error(`Unknown error while fetching ${date} gxg ${i}-${i}:`, error)
-            }
+            handleNetworkError(error, `while fetching ${date} gxg ${i}-${i}`)
+            console.error("Skipping this classroom period")
             // Continue with the next period instead of failing completely
             continue
         }
