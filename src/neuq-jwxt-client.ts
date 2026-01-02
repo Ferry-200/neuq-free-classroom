@@ -5,6 +5,7 @@ import { FreeClassroomRequestOption } from "./type.js"
 import crypto from "crypto-js"
 import * as cheerio from "cheerio"
 import { setTimeout as wait } from "timers/promises"
+import axiosRetry from "axios-retry"
 
 /**
  * 一个支持 cookie 的 axios client，
@@ -15,8 +16,31 @@ export class NEUQJWXTClient {
 
     constructor() {
         const jar = new CookieJar()
-        const axiosClient = axios.create({ jar })
+        const axiosClient = axios.create({
+            jar,
+            timeout: 60000, // 60 second timeout
+            timeoutErrorMessage: "Request timeout after 60 seconds - NEUQ JWXT server did not respond in time"
+        })
         axiosClient.defaults.baseURL = "https://jwxt.neuq.edu.cn/eams"
+
+        // Add retry logic for network errors
+        axiosRetry(axiosClient, {
+            retries: 3,
+            retryDelay: axiosRetry.exponentialDelay,
+            retryCondition: (error) => {
+                return (
+                    axiosRetry.isNetworkOrIdempotentRequestError(error) ||
+                    error.code === "ETIMEDOUT" ||
+                    error.code === "ENETUNREACH" ||
+                    error.code === "ECONNRESET"
+                )
+            },
+            onRetry: (retryCount, error, requestConfig) => {
+                console.warn(
+                    `Retry attempt ${retryCount} for ${requestConfig.url} due to: ${error.message}`
+                )
+            }
+        })
 
         this.client = cookieSupportWrapper(axiosClient)
     }
