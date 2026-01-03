@@ -13,7 +13,7 @@
     "@types/luxon": "^3.6.2",
     "@types/node": "~20",
     "@typescript-eslint/parser": "~8.19",
-    "eslint": "~9.17",
+    "eslint": "^9.39.2",
     "eslint-config-prettier": "~9.1",
     "globals": "~15.14",
     "prettier": "~3.4",
