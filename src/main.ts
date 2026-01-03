@@ -16,20 +16,32 @@ function isNetworkError(error: Error): boolean {
     return errorCode !== undefined && NETWORK_ERROR_CODES.includes(errorCode as "ETIMEDOUT" | "ENETUNREACH" | "ECONNRESET")
 }
 
-function handleNetworkError(error: unknown, context: string): void {
+function handleNetworkError(error: unknown, context: string): never {
+    console.error(`\n❌ Error ${context}`)
+    
     if (error instanceof Error) {
+        // Log full error details for debugging
+        console.error("Error name:", error.name)
+        console.error("Error message:", error.message)
+        console.error("Error code:", (error as NetworkError).code)
+        console.error("Error stack:", error.stack)
+        
         if (isNetworkError(error)) {
-            console.error(`Network error ${context}: ${error.message}`)
-            console.error("This may be due to network connectivity issues or server unavailability")
+            console.error("\n🔌 This is a network connectivity error.")
+            console.error("Possible causes:")
+            console.error("  - The NEUQ JWXT server (jwxt.neuq.edu.cn) is unreachable")
+            console.error("  - Network connectivity issues from GitHub Actions")
+            console.error("  - Server firewall blocking external connections")
         } else if (error.message.includes("timeout")) {
-            console.error(`Timeout error ${context}: ${error.message}`)
-        } else {
-            console.error(`Unexpected error ${context}:`)
-            console.error(error)
+            console.error("\n⏱️  Request timed out after 60 seconds")
         }
     } else {
-        console.error(`Unknown error ${context}:`, error)
+        console.error("Unknown error type:", typeof error)
+        console.error("Error value:", error)
     }
+    
+    // Re-throw to ensure the process exits with error code
+    throw error
 }
 
 function today(): string {
@@ -80,7 +92,7 @@ async function main() {
         succeed = await client.login(user.username, user.password)
     } catch (error) {
         handleNetworkError(error, "during login")
-        return
+        // handleNetworkError now throws, so no return needed
     }
 
     if (!succeed) {
@@ -121,16 +133,16 @@ async function main() {
             )
             console.info(`path: ${filePath}`)
         } catch (error) {
+            console.error(`\n❌ Failed to fetch classroom period ${i} after all retries`)
             handleNetworkError(error, `while fetching ${date} gxg ${i}-${i}`)
-            console.error(`Skipping classroom period ${i} and continuing with next period`)
-            // Continue with the next period instead of failing completely
-            continue
+            // This will now throw and fail the workflow
         }
     }
 }
 
 try {
-    main()
+    await main()  // Add await here
 } catch (err) {
-    console.error(err)
+    console.error("Fatal error:", err)
+    throw err  // Re-throw to ensure non-zero exit code
 }
