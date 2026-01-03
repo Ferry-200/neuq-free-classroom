@@ -10,36 +10,38 @@ interface NetworkError extends Error {
 }
 
 const NETWORK_ERROR_CODES = ["ETIMEDOUT", "ENETUNREACH", "ECONNRESET"] as const
+type NETWORK_ERROR_CODES = typeof NETWORK_ERROR_CODES[number];
 
 function isNetworkError(error: Error): boolean {
     const errorCode = (error as NetworkError).code
-    return errorCode !== undefined && NETWORK_ERROR_CODES.includes(errorCode as "ETIMEDOUT" | "ENETUNREACH" | "ECONNRESET")
+
+    return errorCode !== undefined && NETWORK_ERROR_CODES.includes(errorCode as NETWORK_ERROR_CODES)
 }
 
 function handleNetworkError(error: unknown, context: string): never {
-    console.error(`\n❌ Error ${context}`)
-    
+    console.error(`Error ${context}`)
+
     if (error instanceof Error) {
         // Log full error details for debugging
         console.error("Error name:", error.name)
         console.error("Error message:", error.message)
         console.error("Error code:", (error as NetworkError).code)
         console.error("Error stack:", error.stack)
-        
+
         if (isNetworkError(error)) {
-            console.error("\n🔌 This is a network connectivity error.")
+            console.error("This is a network connectivity error.")
             console.error("Possible causes:")
-            console.error("  - The NEUQ JWXT server (jwxt.neuq.edu.cn) is unreachable")
-            console.error("  - Network connectivity issues from GitHub Actions")
-            console.error("  - Server firewall blocking external connections")
+            console.error("- The NEUQ JWXT server (jwxt.neuq.edu.cn) is unreachable")
+            console.error("- Network connectivity issues from GitHub Actions")
+            console.error("- Server firewall blocking external connections")
         } else if (error.message.includes("timeout")) {
-            console.error("\n⏱️  Request timed out after 60 seconds")
+            console.error("Request timed out after 60 seconds")
         }
     } else {
         console.error("Unknown error type:", typeof error)
         console.error("Error value:", error)
     }
-    
+
     // Re-throw to ensure the process exits with error code
     throw error
 }
@@ -84,7 +86,8 @@ async function main() {
     const user = parseArgs() ?? getEnvJSON()
     if (!user) {
         console.error("pass -u username -p password or provide them in `.env.json`")
-        return
+
+        throw new Error("Missing credentials")
     }
 
     let succeed = false
@@ -97,7 +100,8 @@ async function main() {
 
     if (!succeed) {
         console.error("Authentication failed: Invalid username or password")
-        return
+
+        throw new Error("Authentication failed")
     }
     console.info("login succeed")
 
@@ -133,7 +137,7 @@ async function main() {
             )
             console.info(`path: ${filePath}`)
         } catch (error) {
-            console.error(`\n❌ Failed to fetch classroom period ${i} after all retries`)
+            console.error(`Failed to fetch classroom period ${i} after all retries`)
             handleNetworkError(error, `while fetching ${date} gxg ${i}-${i}`)
             // This will now throw and fail the workflow
         }
