@@ -36,9 +36,9 @@ export class NEUQJWXTClient {
                 )
             },
             onRetry: (retryCount, error, requestConfig) => {
-                console.warn(
-                    `Retry attempt ${retryCount} for ${requestConfig.url} due to: ${error.message}`
-                )
+                console.warn(`Retry attempt ${retryCount}/3 for ${requestConfig.url}`)
+                console.warn(`Reason: ${error.code || error.name} - ${error.message}`)
+                console.warn(`Will retry in ${Math.pow(2, retryCount) * 100}ms...`)
             }
         })
 
