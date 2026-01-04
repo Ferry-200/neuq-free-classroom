@@ -1,0 +1,18 @@
+name: Ping Action
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check Connection to URL
+      run: |
+        url=https://jwxt.neuq.edu.cn/eams
+        if ping -c 1 $(echo $url | awk -F/ '{print $3}') &>/dev/null; then
+          echo "Ping succeeded!"
+        else
+          echo "Ping failed!"
+          exit 1
