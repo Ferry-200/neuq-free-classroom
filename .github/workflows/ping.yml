@@ -9,5 +9,4 @@ jobs:
 
     steps:
     - name: Check Connection to URL
-      run: |
-        ping https://jwxt.neuq.edu.cn/eams
+      run: ping jwxt.neuq.edu.cn
